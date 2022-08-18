@@ -19,6 +19,8 @@ jobs:
             goarch: '386'
           - goos: darwin
             goarch: amd64
+          - goos: linux
+            goarch: 'arm'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2.3.4
