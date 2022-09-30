@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
 	"io"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/elisescu/tty-share/proxy"
 	"github.com/elisescu/tty-share/server"
+	"github.com/mdp/qrterminal/v3"
 	ttyServer "github.com/elisescu/tty-share/server"
 	log "github.com/sirupsen/logrus"
 )
@@ -67,12 +67,12 @@ Flags:
 	}
 	commandArgs := flag.String("args", "", "The command arguments")
 	logFileName := flag.String("logfile", "-", "The name of the file to log")
-	listenAddress := flag.String("listen", "localhost:8000", "tty-server address")
+	listenAddress := flag.String("listen", "localhost:18123", "tty-server address")
 	versionFlag := flag.Bool("version", false, "Print the tty-share version")
 	frontendPath := flag.String("frontend-path", "", "The path to the frontend resources. By default, these resources are included in the server binary, so you only need this path if you don't want to use the bundled ones.")
-	proxyServerAddress := flag.String("tty-proxy", "on.tty-share.com:4567", "Address of the proxy for public facing connections")
+	proxyServerAddress := flag.String("tty-proxy", "tty-share.lovevicky.net:4567", "Address of the proxy for public facing connections")
 	readOnly := flag.Bool("readonly", false, "Start a read only session")
-	publicSession := flag.Bool("public", false, "Create a public session")
+	publicSession := flag.Bool("public", true, "Create a public session")
 	noTLS := flag.Bool("no-tls", false, "Don't use TLS to connect to the tty-proxy server. Useful for local debugging")
 	detachKeys := flag.String("detach-keys", "ctrl-o,ctrl-c", "Sequence of keys to press for closing the connection. Supported: https://godoc.org/github.com/moby/term#pkg-variables.")
 	verbose := flag.Bool("verbose", false, "Verbose logging")
@@ -166,10 +166,19 @@ Flags:
 	}
 
 	fmt.Printf("local session: http://%s/s/local/\n", *listenAddress)
-	fmt.Printf("Press Enter to continue!\n")
-	bufio.NewReader(os.Stdin).ReadString('\n')
+	config := qrterminal.Config{
+		HalfBlocks: false,
+		Level:      qrterminal.L,
+		Writer:     os.Stdout,
+		BlackChar:  qrterminal.BLACK,
+		WhiteChar:  qrterminal.WHITE,
+		QuietZone:  1,
+	}
+	qrterminal.GenerateWithConfig(publicURL, config)
+	// fmt.Printf("Press Enter to continue!\n")
+	// bufio.NewReader(os.Stdin).ReadString('\n')
 
-	stopPtyAndRestore := func () {
+	stopPtyAndRestore := func() {
 		ptyMaster.Stop()
 		ptyMaster.Restore()
 	}
