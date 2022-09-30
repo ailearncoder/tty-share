@@ -118,6 +118,7 @@ func (c *ttyShareClient) Run() (err error) {
 
 	log.Debugf("Built the WS URL from the headers: %s", wsURL)
 
+	websocket.DefaultDialer.TLSClientConfig.InsecureSkipVerify = true
 	c.wsConn, _, err = websocket.DefaultDialer.Dial(wsURL, nil)
 	if err != nil {
 		return

@@ -44,7 +44,7 @@ func NewProxyConnection(backConnAddrr, proxyAddr string, noTLS bool) (*proxyConn
 		if err != nil {
 			return nil, err
 		}
-		conn, err = tls.Dial("tcp", proxyAddr, &tls.Config{RootCAs: roots})
+		conn, err = tls.Dial("tcp", proxyAddr, &tls.Config{RootCAs: roots, InsecureSkipVerify: true})
 		if err != nil {
 			return nil, err
 		}
