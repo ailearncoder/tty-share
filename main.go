@@ -11,7 +11,6 @@ import (
 
 	"github.com/elisescu/tty-share/proxy"
 	"github.com/elisescu/tty-share/server"
-	"github.com/mdp/qrterminal/v3"
 	ttyServer "github.com/elisescu/tty-share/server"
 	log "github.com/sirupsen/logrus"
 )
@@ -85,7 +84,7 @@ Flags:
 	listenAddress := flag.String("listen", "localhost:18123", "tty-server address")
 	versionFlag := flag.Bool("version", false, "Print the tty-share version")
 	frontendPath := flag.String("frontend-path", "", "The path to the frontend resources. By default, these resources are included in the server binary, so you only need this path if you don't want to use the bundled ones.")
-	proxyServerAddress := flag.String("tty-proxy", "tty-share.lovevicky.net:4567", "Address of the proxy for public facing connections")
+	proxyServerAddress := flag.String("tty-proxy", "mi.sen.one:4567", "Address of the proxy for public facing connections")
 	readOnly := flag.Bool("readonly", false, "Start a read only session")
 	publicSession := flag.Bool("public", true, "Create a public session")
 	noTLS := flag.Bool("no-tls", false, "Don't use TLS to connect to the tty-proxy server. Useful for local debugging")
@@ -185,21 +184,22 @@ Flags:
 	// Display the session information to the user, before showing any output from the command.
 	// Wait until the user presses Enter
 	if publicURL != "" {
-		fmt.Printf("public session: %s\n", publicURL)
+		// fmt.Printf("public session: %s\n", publicURL)
 	}
 
-	fmt.Printf("local session: http://%s/s/local/\n", *listenAddress)
-	config := qrterminal.Config{
-		HalfBlocks: false,
-		Level:      qrterminal.L,
-		Writer:     os.Stdout,
-		BlackChar:  qrterminal.BLACK,
-		WhiteChar:  qrterminal.WHITE,
-		QuietZone:  1,
-	}
-	qrterminal.GenerateWithConfig(publicURL, config)
+	// fmt.Printf("local session: http://%s/s/local/\n", *listenAddress)
+	// config := qrterminal.Config{
+	// 	HalfBlocks: false,
+	// 	Level:      qrterminal.L,
+	// 	Writer:     os.Stdout,
+	// 	BlackChar:  qrterminal.BLACK,
+	// 	WhiteChar:  qrterminal.WHITE,
+	// 	QuietZone:  1,
+	// }
+	// qrterminal.GenerateWithConfig(publicURL, config)
 	// fmt.Printf("Press Enter to continue!\n")
 	// bufio.NewReader(os.Stdin).ReadString('\n')
+	fmt.Printf("SessionID:\033[32,1m%s\033[0m\n", sessionID)
 
 	stopPtyAndRestore := func() {
 		ptyMaster.Stop()
