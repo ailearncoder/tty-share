@@ -6,6 +6,8 @@ import (
 	"io"
 	"os"
 	"strings"
+	"net"
+	"strconv"
 
 	"github.com/elisescu/tty-share/proxy"
 	"github.com/elisescu/tty-share/server"
@@ -36,6 +38,19 @@ func (nw *nilPTY) Write(data []byte) (int, error) {
 }
 
 func (nw *nilPTY) Refresh() {
+}
+
+func GetFreePort() (int, error) {
+	addr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:0")
+    if err != nil {
+        return 0, err
+    }
+    l, err := net.ListenTCP("tcp", addr)
+    if err != nil {
+        return 0, err
+    }
+    defer l.Close()
+    return l.Addr().(*net.TCPAddr).Port, nil
 }
 
 func main() {
@@ -127,8 +142,16 @@ Flags:
 
 	sessionID := ""
 	publicURL := ""
+	*listenAddress = "localhost:"
+	port, _err := GetFreePort()
+	if _err == nil {
+		*listenAddress += strconv.Itoa(port)
+	} else {
+		log.Errorf("GetFreePort error")
+		return
+	}
 	if *publicSession {
-		proxy, err := proxy.NewProxyConnection(*listenAddress, *proxyServerAddress, *noTLS)
+		proxy,err := proxy.NewProxyConnection(*listenAddress, *proxyServerAddress, *noTLS)
 		if err != nil {
 			log.Errorf("Can't connect to the proxy: %s\n", err.Error())
 			return
