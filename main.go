@@ -199,7 +199,7 @@ Flags:
 	// qrterminal.GenerateWithConfig(publicURL, config)
 	// fmt.Printf("Press Enter to continue!\n")
 	// bufio.NewReader(os.Stdin).ReadString('\n')
-	fmt.Printf("SessionID:\033[32,1m%s\033[0m\n", sessionID)
+	fmt.Printf("SessionID:\033[32;1m%s\033[0;m\n", sessionID)
 
 	stopPtyAndRestore := func() {
 		ptyMaster.Stop()
